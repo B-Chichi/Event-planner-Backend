@@ -50,8 +50,9 @@ class Event(db.Model, SerializerMixin):
     category_id = db.Column(db.Integer, db.ForeignKey("categories.id"), nullable=False)
     title = db.Column(db.Text)
     venue = db.Column(db.Text)
-    date = db.Column(db.DateTime)
+    date = db.Column(db.Text)
     description = db.Column(db.Text)
+    image = db.Column(db.Text)
 
     reviews = db.relationship("Review", back_populates="event")
     invitations = db.relationship("Invitation", back_populates="event")
