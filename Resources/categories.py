@@ -30,13 +30,13 @@ class CategoryResource (Resource):
         category = Category.query.filter_by(id = id).first()
         category.name = data["name"]
         db.session.commit()
-        return {"message"; "category updated successfully"}
+        return {"message": "category updated successfully"}
 
-     def delete(self, id = None):
+    def delete(self, id = None):
         category =Category.query.filter_by(id = id).first()
         db.session.delete(category)
         db.session.commit()
-        return {"message"; "category deleted successfully"}
+        return {"message": "category deleted successfully"}
 
 
             
