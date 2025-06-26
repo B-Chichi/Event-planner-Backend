@@ -9,9 +9,8 @@ class EventResource(Resource):
     parser.add_argument("title", required=True, help="Title is required")
     parser.add_argument("venue", required=True, help="venue is required")
     parser.add_argument("date", required=True, help="date is required")
-    parser.add_argument("user_id", type=int, required=True, help="User ID is required")
     parser.add_argument(
-        "category_id", type=int, required=True, help="Category ID is required"
+        "category_id", type=int, help="Category ID is required"
     )
     parser.add_argument("description", required=True, help="description is required")
     parser.add_argument("image", required=True, help="image is required")

@@ -24,14 +24,11 @@ class User(db.Model, SerializerMixin):
     email = db.Column(db.VARCHAR, unique=True)
     password = db.Column(db.VARCHAR)
 
-
     events = db.relationship("Event", back_populates="user")
     reviews = db.relationship("Review", back_populates="user")
     invitations = db.relationship("Invitation", back_populates="user")
 
-
     serialize_rules = ("-password", "-invitations","-events","-reviews")
-
 
 class Category(db.Model, SerializerMixin):
     __tablename__ = "categories"
@@ -41,6 +38,7 @@ class Category(db.Model, SerializerMixin):
 
     events = db.relationship("Event", back_populates="category")
 
+    serialize_rules = ("-events",)
 
 class Event(db.Model, SerializerMixin):
     __tablename__ = "events"
@@ -59,9 +57,7 @@ class Event(db.Model, SerializerMixin):
     user = db.relationship("User", back_populates="events")
     category = db.relationship("Category", back_populates="events")
 
-
-
-
+    serialize_rules = ("-user", "-reviews", "-invitations", "-category")
 
 class Review(db.Model, SerializerMixin):
     __tablename__ = "reviews"
@@ -76,9 +72,7 @@ class Review(db.Model, SerializerMixin):
     user = db.relationship("User", back_populates="reviews")
     event = db.relationship("Event", back_populates="reviews")
 
-
-
-
+    serialize_rules = ("-user", "-event")
 
 class Invitation(db.Model, SerializerMixin):
     __tablename__ = "invitations"
@@ -92,5 +86,5 @@ class Invitation(db.Model, SerializerMixin):
     user = db.relationship("User", back_populates="invitations")
     event = db.relationship("Event", back_populates="invitations")
 
-
+    serialize_rules = ("-user", "-event")
 
