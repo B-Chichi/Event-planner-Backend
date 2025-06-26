@@ -11,6 +11,9 @@ from Resources.Events import EventResource
 from Resources.Reviews import ReviewResource
 from Resources.categories import CategoryResource
 from Resources.Invitations import InvitationResource
+from dotenv import load_dotenv
+import os
+
 
 # entry point of our flask application
 app = Flask(__name__)
@@ -18,13 +21,15 @@ CORS(app, origins=["*"])
 
 # setting up flask_restful
 api = Api(app)
-app.config["JWT_SECRET_KEY"] = ("super-secret-key"  )
+app.config["JWT_SECRET_KEY"] = ("super-secret-key")
 jwt = JWTManager(app)
+load_dotenv()
 
 
 # configuring our app
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///events.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
 
 
 # inorder to see our sql statements being logged out;
