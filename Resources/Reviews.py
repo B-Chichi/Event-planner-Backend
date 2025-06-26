@@ -51,7 +51,7 @@ class ReviewResource(Resource):
         db.session.commit()
         return {"message": "review updated"}
 
-    def delete(self, id):
+    def delete(self, id): 
         review = db.session.get(Review,id)
         if review is None:
             return {"message": "review not found"}, 

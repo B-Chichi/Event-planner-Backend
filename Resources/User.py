@@ -65,8 +65,9 @@ class SigninResource(Resource):
             return{"message": "User already exists"}, 422
         
         hash = generate_password_hash(data["password"]).decode("utf-8")
-        
-        user = User(**data, password=hash)
+        data["password"] = hash
+        user = User(**data)
+
 
         db.session.add(user)
         db.session.commit()
@@ -91,12 +92,13 @@ class LoginResource(Resource):
             return {"message": "User does not exist"}, 401
         
         if check_password_hash(user.password, data["password"]):
-            # access_token = create_access_token(identity=user.id)
+            access_token = create_access_token(identity=user.id)
+            
 
             return {
                 "message": "Login successful",
                 "user": user.to_dict(),
-                "access_token": "access_token"
+                "access_token": access_token
             }, 201
         else:
             return {"message": "Invalid email or password"}, 401

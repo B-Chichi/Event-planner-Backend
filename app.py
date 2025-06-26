@@ -2,6 +2,8 @@ from flask import Flask
 from flask_migrate import Migrate
 from flask_cors import CORS
 from flask_restful import Api
+from flask_jwt_extended import JWTManager
+
 
 from models import db
 from Resources.User import UserResource, LoginResource, SigninResource
@@ -11,11 +13,13 @@ from Resources.categories import CategoryResource
 
 # entry point of our flask application
 app = Flask(__name__)
+CORS(app, origins=["*"])
 
 # setting up flask_restful
 api = Api(app)
+app.config["JWT_SECRET_KEY"] = ("super-secret-key"  )
+jwt = JWTManager(app)
 
-CORS(app)
 
 # configuring our app
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///events.db"
