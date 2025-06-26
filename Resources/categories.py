@@ -1,6 +1,6 @@
 from flask_restful import Resource, reqparse
 from models import Category, db
-from flask import jsonify, request
+from flask import jsonify
 
 
 class CategoryResource (Resource):
