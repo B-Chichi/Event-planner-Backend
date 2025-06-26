@@ -3,6 +3,7 @@ from flask_migrate import Migrate
 from flask_cors import CORS
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
+from datetime import timedelta
 
 
 from models import db
@@ -21,15 +22,15 @@ CORS(app, origins=["*"])
 
 # setting up flask_restful
 api = Api(app)
-app.config["JWT_SECRET_KEY"] = ("super-secret-key")
 jwt = JWTManager(app)
 load_dotenv()
 
 
 # configuring our app
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///events.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=24)
 
 
 # inorder to see our sql statements being logged out;
