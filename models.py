@@ -34,7 +34,7 @@ class Category(db.Model, SerializerMixin):
     __tablename__ = "categories"
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.Text)
+    name = db.Column(db.Text, unique=True)
 
     events = db.relationship("Event", back_populates="category")
 

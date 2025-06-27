@@ -92,7 +92,7 @@ class LoginResource(Resource):
             return {"message": "User does not exist"}, 401
         
         if check_password_hash(user.password, data["password"]):
-            access_token = create_access_token(identity=user.id)
+            access_token = create_access_token(identity=str(user.id))
             
 
             return {

@@ -3,7 +3,7 @@ from flask_migrate import Migrate
 from flask_cors import CORS
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
-from datetime import timedelta
+#from datetime import timedelta
 
 
 from models import db
@@ -30,7 +30,8 @@ load_dotenv()
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
-app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=24)
+#app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=24)
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = False
 
 
 # inorder to see our sql statements being logged out;
@@ -49,7 +50,7 @@ def index():
 api.add_resource(UserResource, "/users", "/users/<int:id>")
 api.add_resource(SigninResource, "/signin")
 api.add_resource(LoginResource, "/login")
-api.add_resource(EventResource, "/events", "/events/<int:id>")
+api.add_resource(EventResource, "/events","/events/<int:id>")
 api.add_resource(ReviewResource,"/reviews","/reviews/<int:id>")
 api.add_resource(CategoryResource,"/categories","/categories/<int:id>")
 api.add_resource(InvitationResource, "/invitations", "/invitations/<int:id>")

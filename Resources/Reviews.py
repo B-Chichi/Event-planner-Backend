@@ -6,7 +6,7 @@ from datetime import datetime
 
 class ReviewResource(Resource):
     parser = reqparse.RequestParser()
-    parser.add_argument("rating", type=int, required=True, help="rating is required")
+    parser.add_argument("rating", type=str, required=False, help="rating is required")
     parser.add_argument("comment", type=str)
     parser.add_argument("created_at", type=str) 
 

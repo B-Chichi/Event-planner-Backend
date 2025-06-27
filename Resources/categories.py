@@ -1,46 +1,67 @@
 from flask_restful import Resource, reqparse
+from sqlalchemy import func
 from models import Category, db
-from flask import jsonify
+from sqlalchemy.exc import SQLAlchemyError
 
 
-class CategoryResource (Resource):
+class CategoryResource(Resource):
     parser = reqparse.RequestParser()
-    parser.add_argument("name", required= True, type=str, help="name is required")
-    
-    def get(self, id = None):
+    parser.add_argument(
+        "name", required=True, type=str, help="Category name is required"
+    )
+
+    def get(self, id=None):
         if id is None:
             categories = Category.query.all()
-            return jsonify([category.to_dict () for category in categories])
+            return [cat.to_dict() for cat in categories], 200
 
-        else:
-            category = Category.query.filter_by(id = id).first()
-            if category is None : 
-                return {"message": "category not found"}
-            return jsonify(category.to_dict())
-
+        category = Category.query.filter_by(id=id).first()
+        if not category:
+            return {"message": "Category not found"}, 404
+        return category.to_dict(), 200
 
     def post(self):
-        data = self.parser.parse_args()
-        category = Category(**data)
-        db.session.add(category)
-        db.session.commit()
+        try:
+            data = self.parser.parse_args()
+            name = data["name"].strip()
 
-    def patch(self, id = None):
-        data = self.parser.parse_args()
-        category = Category.query.filter_by(id = id).first()
-        category.name = data["name"]
-        db.session.commit()
-        return {"message": "category updated successfully"}
+            if not name:
+                return {"message": "Category name cannot be empty"}, 400
 
-    def delete(self, id = None):
-        category =Category.query.filter_by(id = id).first()
+            # Case-insensitive duplicate check
+            existing = Category.query.filter(
+                func.lower(Category.name) == name.lower()
+            ).first()
+            if existing:
+                return {"id": existing.id, "name": existing.name}, 200
+
+            new_category = Category(name=name)
+            db.session.add(new_category)
+            db.session.commit()
+
+            return {"id": new_category.id, "name": new_category.name}, 201
+
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return {"message": f"Database error: {str(e)}"}, 500
+        except Exception as e:
+            return {"message": f"Server error: {str(e)}"}, 500
+
+    def patch(self, id=None):
+        category = Category.query.filter_by(id=id).first()
+        if not category:
+            return {"message": "Category not found"}, 404
+
+        data = self.parser.parse_args()
+        category.name = data["name"].strip()
+        db.session.commit()
+        return {"message": "Category updated successfully"}
+
+    def delete(self, id=None):
+        category = Category.query.filter_by(id=id).first()
+        if not category:
+            return {"message": "Category not found"}, 404
+
         db.session.delete(category)
         db.session.commit()
-        return {"message": "category deleted successfully"}
-
-
-            
-
-            
-
-
+        return {"message": "Category deleted successfully"}
