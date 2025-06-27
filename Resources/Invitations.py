@@ -1,7 +1,10 @@
-from flask_restful import Resource, reqparse
 from flask import jsonify
-from models import Invitation, db
+from flask_restful import Resource, reqparse
 from datetime import datetime
+from flask_mail import Message
+
+from models import Invitation, db, User, Event
+from app import mail  
 
 
 class InvitationResource(Resource):
@@ -38,13 +41,40 @@ class InvitationResource(Resource):
         )
         db.session.add(invitation)
         db.session.commit()
-        return {"message": "invitation sent"}, 
+
+        # Fetch related user and event details
+        user = db.session.get(User, data["user_id"])
+        event = db.session.get(Event, data["event_id"])
+
+        if user and event:
+            try:
+                subject = f"You're invited to {event.title}!"
+                body = f"""
+                Hi {user.name},
+
+                You've been invited to attend "{event.title}" on {event.date} at {event.venue}.
+
+                Description: {event.description}
+
+                We hope to see you there!
+                """
+
+                msg = Message(subject, recipients=[user.email])
+                msg.body = body
+                mail.send(msg)
+            except Exception as e:
+                return {
+                    "message": "Invitation saved but email failed",
+                    "error": str(e),
+                }, 500
+
+        return {"message": "invitation sent successfully"}
 
     def patch(self, id):
         data = self.parser.parse_args()
         invitation = db.session.get(Invitation, id)
         if invitation is None:
-            return {"message": "invitation not found"}, 
+            return {"message": "invitation not found"}, 404
 
         if data["event_id"] is not None:
             invitation.event_id = data["event_id"]
@@ -61,7 +91,7 @@ class InvitationResource(Resource):
     def delete(self, id):
         invitation = db.session.get(Invitation, id)
         if invitation is None:
-            return {"message": "invitation not found"}, 
+            return {"message": "invitation not found"}, 404
         db.session.delete(invitation)
         db.session.commit()
         return {"message": "invitation deleted"}
