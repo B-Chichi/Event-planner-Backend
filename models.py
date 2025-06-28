@@ -57,7 +57,7 @@ class Event(db.Model, SerializerMixin):
     user = db.relationship("User", back_populates="events")
     category = db.relationship("Category", back_populates="events")
 
-    serialize_rules = ("-user", "-reviews", "-invitations", "-category")
+    serialize_rules = ("-user", "-reviews", "-invitations")
 
 class Review(db.Model, SerializerMixin):
     __tablename__ = "reviews"
