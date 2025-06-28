@@ -72,7 +72,13 @@ class SigninResource(Resource):
         db.session.add(user)
         db.session.commit()
 
-        return{"message": "User created successfully"}, 201
+        access_token = create_access_token(identity=str(user.id))
+
+        return {
+            "message": "signup successful",
+            "user": user.to_dict(),
+            "access_token": access_token,
+        }, 201
     
 class LoginResource(Resource):
     parser = reqparse.RequestParser()
