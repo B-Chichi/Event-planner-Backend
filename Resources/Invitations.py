@@ -1,10 +1,8 @@
 from flask import jsonify
 from flask_restful import Resource, reqparse
 from datetime import datetime
-from flask_mail import Message
 
-from models import Invitation, db, User, Event
-from app import mail  
+from models import Invitation, db
 
 
 class InvitationResource(Resource):
@@ -41,32 +39,6 @@ class InvitationResource(Resource):
         )
         db.session.add(invitation)
         db.session.commit()
-
-        # Fetch related user and event details
-        user = db.session.get(User, data["user_id"])
-        event = db.session.get(Event, data["event_id"])
-
-        if user and event:
-            try:
-                subject = f"You're invited to {event.title}!"
-                body = f"""
-                Hi {user.name},
-
-                You've been invited to attend "{event.title}" on {event.date} at {event.venue}.
-
-                Description: {event.description}
-
-                We hope to see you there!
-                """
-
-                msg = Message(subject, recipients=[user.email])
-                msg.body = body
-                mail.send(msg)
-            except Exception as e:
-                return {
-                    "message": "Invitation saved but email failed",
-                    "error": str(e),
-                }, 500
 
         return {"message": "invitation sent successfully"}
 
