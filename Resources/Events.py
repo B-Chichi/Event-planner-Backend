@@ -14,8 +14,11 @@ class EventResource(Resource):
         "category_id", type=int, required=True, help="Category is required"
     )
 
+    @jwt_required()
     def get(self):
-        events = Event.query.all()
+        user_id = get_jwt_identity()
+
+        events = Event.query.filter_by(user_id=user_id).all()
         return [event.to_dict() for event in events]
 
     @jwt_required()
