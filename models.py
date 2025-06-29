@@ -72,7 +72,7 @@ class Review(db.Model, SerializerMixin):
     user = db.relationship("User", back_populates="reviews")
     event = db.relationship("Event", back_populates="reviews")
 
-    serialize_rules = ("-user", "-event")
+    serialize_rules = ("-user.reviews", "-event", "user.name")
 
 class Invitation(db.Model, SerializerMixin):
     __tablename__ = "invitations"
