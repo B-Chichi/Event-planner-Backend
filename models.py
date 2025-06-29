@@ -26,9 +26,8 @@ class User(db.Model, SerializerMixin):
 
     events = db.relationship("Event", back_populates="user")
     reviews = db.relationship("Review", back_populates="user")
-    invitations = db.relationship("Invitation", back_populates="user")
 
-    serialize_rules = ("-password", "-invitations","-events","-reviews")
+    serialize_rules = ("-password","-events","-reviews")
 
 class Category(db.Model, SerializerMixin):
     __tablename__ = "categories"
@@ -53,11 +52,10 @@ class Event(db.Model, SerializerMixin):
     image = db.Column(db.Text)
 
     reviews = db.relationship("Review", back_populates="event")
-    invitations = db.relationship("Invitation", back_populates="event")
     user = db.relationship("User", back_populates="events")
     category = db.relationship("Category", back_populates="events")
 
-    serialize_rules = ("-user", "-reviews", "-invitations")
+    serialize_rules = ("-user", "-reviews")
 
 class Review(db.Model, SerializerMixin):
     __tablename__ = "reviews"
