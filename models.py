@@ -74,17 +74,3 @@ class Review(db.Model, SerializerMixin):
 
     serialize_rules = ("-user.reviews", "-event", "user.name")
 
-class Invitation(db.Model, SerializerMixin):
-    __tablename__ = "invitations"
-
-    id = db.Column(db.Integer, primary_key=True)
-    event_id = db.Column(db.Integer, db.ForeignKey("events.id"), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    status = db.Column(db.Text)
-    created_at = db.Column(db.TIMESTAMP, default=datetime.now())
-
-    user = db.relationship("User", back_populates="invitations")
-    event = db.relationship("Event", back_populates="invitations")
-
-    serialize_rules = ("-user", "-event")
-

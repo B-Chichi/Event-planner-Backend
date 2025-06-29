@@ -11,7 +11,6 @@ from Resources.User import UserResource, LoginResource, SigninResource
 from Resources.Events import EventResource
 from Resources.Reviews import ReviewResource
 from Resources.categories import CategoryResource
-from Resources.Invitations import InvitationResource
 from dotenv import load_dotenv
 import os
 
@@ -53,4 +52,3 @@ api.add_resource(LoginResource, "/login")
 api.add_resource(EventResource, "/events","/events/<int:id>")
 api.add_resource(ReviewResource, "/events/<int:event_id>/reviews")
 api.add_resource(CategoryResource,"/categories","/categories/<int:id>")
-api.add_resource(InvitationResource, "/invitations", "/invitations/<int:id>")
