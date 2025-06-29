@@ -67,7 +67,7 @@ class Review(db.Model, SerializerMixin):
     event_id = db.Column(db.Integer, db.ForeignKey("events.id"), nullable=False)
     rating = db.Column(db.Integer)
     comment = db.Column(db.Text)
-    created_at = db.Column(db.TIMESTAMP, default=datetime.now())
+    created_at = db.Column(db.TIMESTAMP, nullable=False, default=datetime.utcnow)
 
     user = db.relationship("User", back_populates="reviews")
     event = db.relationship("Event", back_populates="reviews")
