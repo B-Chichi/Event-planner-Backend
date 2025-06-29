@@ -1,5 +1,6 @@
 from flask_restful import Resource, reqparse
 from flask import jsonify
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from models import Review, db
 from datetime import datetime
 
@@ -8,53 +9,30 @@ class ReviewResource(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument("rating", type=str, required=False, help="rating is required")
     parser.add_argument("comment", type=str)
-    parser.add_argument("created_at", type=str) 
+    parser.add_argument("created_at", type=str)
 
-    def get(self, id=None):
-        if id is None:
-            reviews = Review.query.all()
-            return jsonify([r.to_dict() for r in reviews])
-        review = db.session.get(Review,id)
-        if review is None:
-            return {"message": "review not found"}, 404
-        return jsonify(review.to_dict())
+    @jwt_required()
+    def get(self, event_id):
+        reviews = Review.query.filter_by(event_id=event_id).all()
+        return jsonify([r.to_dict() for r in reviews])
 
-    def post(self):
+    @jwt_required()
+    def post(self, event_id):
+        user_id = get_jwt_identity()
         data = self.parser.parse_args()
+
         if not data["created_at"]:
             data["created_at"] = datetime.now()
         else:
             data["created_at"] = datetime.fromisoformat(data["created_at"])
 
         review = Review(
+            user_id=int(user_id),
+            event_id=event_id,
             rating=data["rating"],
             comment=data["comment"],
             created_at=data["created_at"],
         )
         db.session.add(review)
         db.session.commit()
-        return {"message": "review submitted"},
-
-    def patch(self, id):
-        data = self.parser.parse_args()
-        review = db.session.get(Review,id)
-        if review is None:
-            return {"message": "review not found"}, 404
-
-        for field in ["rating", "comment", "created_at"]:
-            if data[field] is not None:
-                if field == "created_at":
-                    setattr(review, field, datetime.fromisoformat(data[field]))
-                else:
-                    setattr(review, field, data[field])
-
-        db.session.commit()
-        return {"message": "review updated"}
-
-    def delete(self, id): 
-        review = db.session.get(Review,id)
-        if review is None:
-            return {"message": "review not found"}, 
-        db.session.delete(review)
-        db.session.commit()
-        return {"message": "review deleted"}
+        return {"message": "review submitted", "review": review.to_dict()}, 201
