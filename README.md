@@ -77,6 +77,8 @@ The app uses token-based auth
 
 Add CORS support for frontend-backend connection
 
+[Watch video demo](https://drive.google.com/file/d/1vZgetG51WejjvCWi18dIElKR6GgxZw3G/view?usp=sharing)
+
 ## Contributors
   -Jeff Mbithi
   -Brian Bett
